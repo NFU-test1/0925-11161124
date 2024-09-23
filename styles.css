@@ -18,11 +18,13 @@ body {
     height: 100px;
     perspective: 1000px;
     cursor: pointer;
-    transition: opacity 0.5s ease; /* 淡出效果 */
+    transition: opacity 1.5s ease; /* 淡出效果 */
 }
 
 .card.hidden {
     opacity: 0; /* 淡出到透明 */
+    visibility: hidden; /* 隐藏 */
+    transition: opacity 1.5s ease, visibility 0s 1.5s;
 }
 
 .card-inner {
