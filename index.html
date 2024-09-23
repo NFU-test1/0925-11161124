@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>4X4 記憶大考驗</h1>
+
+    <!-- 隱藏選項 -->
+    <div id="options">
+        <label>
+            <input type="radio" name="hide-option" value="hide" checked> 隱藏配對成功的卡片
+        </label>
+        <label>
+            <input type="radio" name="hide-option" value="show"> 不隱藏配對成功的卡片
+        </label>
+    </div>
+
+    <!-- 倒計時顯示 -->
+    <div id="timer" style="display:none;">倒計時：<span id="countdown">10</span> 秒</div>
+    
+    <!-- 遊戲板 -->
+    <div id="game-board">
+        <!-- 這裡會動態生成卡片 -->
+    </div>
+    
+    <!-- 開始遊戲按鈕 -->
+    <button id="start">開始遊戲</button>
+
+    <!-- 重新開始按鈕 -->
+    <button id="restart" style="display:none;">重新開始</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
