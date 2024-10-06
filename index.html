@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Game</title>
+    <title>記憶大考驗 - 釣魚遊戲</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>4X4 記憶大考驗</h1>
-
-    <!-- 隱藏選項 -->
+    <h1>記憶大考驗 - 釣魚遊戲</h1>
+    
+    <!-- 遊戲選項 -->
     <div id="options">
         <label>
             <input type="radio" name="hide-option" value="hide" checked> 隱藏配對成功的卡片
@@ -18,9 +18,17 @@
             <input type="radio" name="hide-option" value="show"> 不隱藏配對成功的卡片
         </label>
     </div>
+    <div>
+        <label for="grid-size" style="font-size: 20px;">選擇網格大小：</label>
+        <select id="grid-size" style="font-size: 20px;">
+            <option value="2">2 x 2</option>
+            <option value="4" selected>4 x 4</option>
+            <option value="6">6 x 6</option>
+        </select>
+    </div>
 
-    <!-- 倒計時顯示 -->
-    <div id="timer" style="display:none;">倒計時：<span id="countdown">10</span> 秒</div>
+    <!-- 倒數計時顯示在右上角 -->
+    <div id="fullscreen-timer">10</div>
     
     <!-- 遊戲板 -->
     <div id="game-board">
