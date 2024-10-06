@@ -81,7 +81,7 @@ function createBoard() {
         
         const cardFront = document.createElement('div');
         cardFront.classList.add('card-front');
-        cardFront.innerHTML = '🎣'; // 可以在正面添加圖案或文字
+        // cardFront.innerHTML = '🎣'; // 可以在正面添加圖案或文字
         
         const cardBack = document.createElement('div');
         cardBack.classList.add('card-back');
