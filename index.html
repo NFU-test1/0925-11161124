@@ -5,26 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>記憶大考驗 - 釣魚遊戲</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- 引入 SweetAlert -->
 </head>
 <body>
     <h1>記憶大考驗 - 釣魚遊戲</h1>
     
     <!-- 遊戲選項 -->
-    <div id="options">
-        <label>
-            <input type="radio" name="hide-option" value="hide" checked> 隱藏配對成功的卡片
-        </label>
-        <label>
-            <input type="radio" name="hide-option" value="show"> 不隱藏配對成功的卡片
-        </label>
+    <div id="game-options">
+        <!-- 隱藏/不隱藏選項 -->
+        <div id="options">
+            <label>
+                <input type="radio" name="hide-option" value="hide" > 隱藏
+            </label>
+            <label>
+                <input type="radio" name="hide-option" value="show" checked> 不隱藏
+            </label>
+            <!-- 參賽隊伍數量選項 -->
+            <label for="team-count">參賽隊伍數量：</label>
+            <select id="team-count"  style="font-size: 20px;">
+                <option value="2">2 隊</option>
+                <option value="3">3 隊</option>
+                <option value="4">4 隊</option>
+                <option value="5">5 隊</option>
+            </select>
+        </div>
+
+        <!-- 網格大小和倒數計時選項 -->
+        <div>
+            <label for="grid-size">選擇網格大小：</label>
+            <select id="grid-size"  style="font-size: 20px;">
+                <option value="2">2 x 2</option>
+                <option value="4" selected>4 x 4</option>
+                <option value="6">6 x 6</option>
+            </select>
+            <!-- 倒數計時選項 -->
+            <label for="countdown-time">倒數計時：</label>
+            <select id="countdown-time" style="font-size: 20px;">
+                <option value="1">1 秒</option>
+                <option value="5">5 秒</option>
+                <option value="10" selected>10 秒</option>
+                <option value="20">20 秒</option>
+                <option value="30">30 秒</option>
+            </select>
+        </div>
     </div>
-    <div>
-        <label for="grid-size" style="font-size: 20px;">選擇網格大小：</label>
-        <select id="grid-size" style="font-size: 20px;">
-            <option value="2">2 x 2</option>
-            <option value="4" selected>4 x 4</option>
-            <option value="6">6 x 6</option>
-        </select>
+
+    <!-- 顯示隊伍和分數 -->
+    <div id="team-scores">
+        <!-- 這裡會動態生成隊伍和分數 -->
     </div>
 
     <!-- 倒數計時顯示在右上角 -->

@@ -9,18 +9,30 @@ const imagesFull = [
 ];
 
 let gameBoard = document.getElementById('game-board');
-let fullscreenTimer = document.getElementById('fullscreen-timer'); // 全屏倒數計時區域
+let fullscreenTimer = document.getElementById('fullscreen-timer'); // 倒數計時顯示區域
+let teamScores = document.getElementById('team-scores'); // 顯示隊伍和分數的區域
+let gameOptions = document.getElementById('game-options'); // 包裹選項的容器
+let startButton = document.getElementById('start');
+let restartButton = document.getElementById('restart');
 let firstCard, secondCard;
 let lockBoard = false;
 let hasFlippedCard = false;
-let startTime, endTime;
+let startTime;
 let matchedPairs = 0;
 let totalPairs = 8; // 預設 4x4
 let hideOption = document.querySelector('input[name="hide-option"]:checked').value;
+let currentTeam = 0; // 當前隊伍
+let teams = []; // 儲存隊伍名稱及其成績
+let scores = {}; // 每個隊伍的配對數
+
+// 預設隊伍顏色
+const teamColors = ["紅隊", "藍隊", "黃隊", "綠隊", "紫隊"];
 
 // 取得下拉式選單和選項
 const gridSizeSelect = document.getElementById('grid-size');
 const hideOptions = document.querySelectorAll('input[name="hide-option"]');
+const countdownTimeSelect = document.getElementById('countdown-time');
+const teamCountSelect = document.getElementById('team-count'); // 取得隊伍數量選項
 
 // 當玩家更改選項時，更新 hideOption 的值
 hideOptions.forEach(option => {
@@ -69,8 +81,7 @@ function createBoard() {
         
         const cardFront = document.createElement('div');
         cardFront.classList.add('card-front');
-        // 可以在正面添加圖案或文字
-        // cardFront.innerHTML = '🎣';
+        cardFront.innerHTML = '🎣'; // 可以在正面添加圖案或文字
         
         const cardBack = document.createElement('div');
         cardBack.classList.add('card-back');
@@ -85,13 +96,21 @@ function createBoard() {
 }
 
 function startGame() {
-    document.getElementById('start').style.display = 'none'; // 隱藏開始按鈕
-    document.getElementById('restart').style.display = 'none'; // 確保重新開始按鈕不顯示
+    startButton.style.display = 'none'; // 隱藏開始按鈕
+    restartButton.style.display = 'none'; // 確保重新開始按鈕不顯示
+    gameOptions.style.display = 'none'; // 隱藏遊戲選項
 
-    let countdown = 10;
+    let countdown = parseInt(countdownTimeSelect.value); // 根據使用者選擇的時間倒數
     fullscreenTimer.textContent = countdown;
-    fullscreenTimer.classList.add('show'); // 顯示全屏倒數計時
-    
+    fullscreenTimer.classList.add('show'); // 顯示倒數計時
+
+    let teamCount = parseInt(teamCountSelect.value); // 取得隊伍數量
+    teams = teamColors.slice(0, teamCount); // 根據選擇的數量分配隊伍
+    scores = teams.reduce((acc, team) => { acc[team] = 0; return acc; }, {}); // 初始化每個隊伍的分數
+    currentTeam = 0; // 從紅隊開始
+
+    updateTeamScores(); // 更新顯示的隊伍分數
+
     const countdownInterval = setInterval(() => {
         countdown--;
         fullscreenTimer.textContent = countdown;
@@ -112,6 +131,20 @@ function startGame() {
     }, 1000);
 
     flipAllCardsToFront(); // 顯示正面
+}
+
+// 更新隊伍和分數的顯示
+function updateTeamScores() {
+    teamScores.innerHTML = ''; // 清空之前的顯示
+    teams.forEach((team, index) => {
+        let teamDiv = document.createElement('div');
+        teamDiv.classList.add('team');
+        if (index === currentTeam) {
+            teamDiv.classList.add('active'); // 當前隊伍加上 active 樣式
+        }
+        teamDiv.textContent = `${team} - 分數: ${scores[team]}`;
+        teamScores.appendChild(teamDiv);
+    });
 }
 
 function flipAllCardsToBack() {
@@ -148,13 +181,19 @@ function flipCard() {
 
 function checkForMatch() {
     let isMatch = firstCard.innerHTML === secondCard.innerHTML;
-    isMatch ? disableCards() : unflipCards();
+    if (isMatch) {
+        scores[teams[currentTeam]]++; // 成功配對，增加當前隊伍分數
+        updateTeamScores(); // 即時更新分數顯示
+        disableCards();
+    } else {
+        switchTeam(); // 失敗換隊
+    }
 }
 
 function disableCards() {
     firstCard.removeEventListener('click', flipCard);
     secondCard.removeEventListener('click', flipCard);
-    
+
     if (hideOption === 'hide') {
         firstCard.classList.add('hidden');
         secondCard.classList.add('hidden');
@@ -181,20 +220,44 @@ function resetBoard() {
     [firstCard, secondCard] = [null, null];
 }
 
+function switchTeam() {
+    // 當配對失敗時，切換至下一隊
+    currentTeam = (currentTeam + 1) % teams.length;
+    unflipCards(); // 配對失敗後翻回牌面
+    
+    setTimeout(() => {
+        // 使用 SweetAlert 顯示隊伍切換提示，並自動在 1 秒後關閉
+        Swal.fire({
+            title: `換到 ${teams[currentTeam]}`,
+            icon: 'info',
+            timer: 1000,
+            showConfirmButton: false
+        });
+        updateTeamScores(); // 更新顯示隊伍和分數
+    }, 1000); // 等待翻轉動畫結束後顯示提示
+}
+
 function gameOver() {
-    endTime = new Date();
-    const timeTaken = Math.floor((endTime - startTime) / 1000); // 計算所花時間（秒）
-    alert(`完成時間：${timeTaken} 秒`); // 使用 alert 顯示完成時間
-    document.getElementById('restart').style.display = 'block'; // 顯示重新開始按鈕
+    let highestScore = Math.max(...Object.values(scores)); // 找到最高分
+    let winningTeams = teams.filter(team => scores[team] === highestScore); // 找到分數最高的隊伍
+    if (winningTeams.length === 1) {
+        Swal.fire(`${winningTeams[0]} 獲勝，分數為：${highestScore}`);
+    } else {
+        Swal.fire(`平手！${winningTeams.join(' 和 ')} 分數為：${highestScore}`);
+    }
+    restartButton.style.display = 'block'; // 顯示重新開始按鈕
+    gameOptions.style.display = 'block'; // 顯示選項
 }
 
 // 重新開始遊戲
-document.getElementById('restart').addEventListener('click', () => {
+restartButton.addEventListener('click', () => {
     matchedPairs = 0;
     gameBoard.innerHTML = '';
     createBoard();
     startGame();
-    document.getElementById('restart').style.display = 'none'; // 隱藏重新開始按鈕
+    restartButton.style.display = 'none'; // 隱藏重新開始按鈕
+    gameOptions.style.display = 'none'; // 顯示選項
+
 });
 
 // 初始化遊戲
